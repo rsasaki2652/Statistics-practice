@@ -27,9 +27,23 @@ plt.plot(x, y)
 
 #累積分布関数(CDF:Cumulative Distribution Function)の描画
 x = np.linspace(-3, 3, 100)
-y = stats.norm.cdf(x)
+y = stats.norm.cdf(x) #normは正規分布
 plt.plot(x, y)
 #右側の面積を求める
 y = stats.norm.sf(x)
 plt.plot(y)
+
+#カーネル密度推定(Kernel Density Estimation)
+x = np.linspace(-3, 10, 100)
+y = stats.gaussian_kde([1, 1, 2, 2, 3, 4, 5]).pdf(x)
+plt.plot(x, y)
+#データフレームをdatasetとした場合
+x = np.linspace(-3, 10, 100)
+y = stats.gaussian_kde(df['tip']).pdf(x) #tipカラムのシリーズのデータのkde
+plt.plot(x, y)
+#ヒストグラムと一緒にkdeを描画
+sns.displot(df['tip'], kde=True)
+#kdeからデータをサンプルする
+resample_data = stats.gaussian_kde(df['tip']).resample()
+
 
