@@ -24,3 +24,12 @@ plt.vlines(x, 0, y) #0~yまで線を引く
 x = np.linspace(-2, 2, 100)
 y = stats.uniform(0, 1).pdf(x) #pdfは確率密度関数(Probability Density Function)
 plt.plot(x, y)
+
+#累積分布関数(CDF:Cumulative Distribution Function)の描画
+x = np.linspace(-3, 3, 100)
+y = stats.norm.cdf(x)
+plt.plot(x, y)
+#右側の面積を求める
+y = stats.norm.sf(x)
+plt.plot(y)
+
