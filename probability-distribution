@@ -46,4 +46,14 @@ sns.displot(df['tip'], kde=True)
 #kdeからデータをサンプルする
 resample_data = stats.gaussian_kde(df['tip']).resample()
 
+#標準化
+from sklearn.preprocessing import StandardScaler #標準化するクラスのインポート
+#StandardScaler()の使い方
+scaler = StandardScaler()
+scaler.fit_transform([[1], [2], [3], [4], [5]]) #二次元のデータを入れる必要があるため二重リストにする
+#データフレームを標準化
+scaled = scaler.fit_transform(df['tip_rate'].values.reshape(-1, 1)) #.values.reshape(-1, 1)でtip_rateカラムの中身を二重リスト化
+#複数のカラムを標準化
+scaled = scaler.fit_transform(df[['total_bill', 'tip_rate']])
+
 
