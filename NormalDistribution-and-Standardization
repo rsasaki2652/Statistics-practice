@@ -1,0 +1,51 @@
+import numpy as np
+import pandas as pd
+import seaborn as sns
+from scipy import stats
+from sklearn.preprocessing import StandardScaler #標準化　
+import matplotlib.pyplot as plt
+%matplotlib inline
+
+#68-95-99.7ルール
+group1 = []
+group2 = []
+group3 = []
+samples = []
+loc = 4
+scale = 3
+
+for i in range(1000):
+    sample = stats.norm(loc=loc, scale=scale).rvs()
+    if loc-scale < sample < loc+scale:
+        group1.append(sample)
+    elif loc-2*scale < sample < loc+2*scale:
+        group2.append(sample)
+    elif loc-3*scale < sample < loc+3*scale:
+        group3.append(sample)
+    samples.append(sample)
+print(len(group1)/len(samples))
+print((len(group1)+len(group2))/len(samples))
+print((len(group1)+len(group2)+len(group3))/len(samples))
+
+#標準化
+scaler = StandardScaler()
+scaler.fit_transform([[1], [2], [3], [4], [5]]) #二次元のデータを入れる必要があるため二重リストにする
+#データフレームを標準化
+scaled = scaler.fit_transform(df['tip_rate'].values.reshape(-1, 1)) #.values.reshape(-1, 1)でtip_rateカラムの中身を二重リスト化
+#複数のカラムを標準化
+scaled = scaler.fit_transform(df[['total_bill', 'tip_rate']])
+
+#二項分布（サイコロを3回振って2が出る確率）
+n = 3
+x = np.arange(n+1) #出る回数を設定（離散型だからarange
+y = stats.binom(n=n, p=1/6).pmf(x) #.binomで二項分布を行う(nが試行回数、pが確率)
+plt.plot(x, y, 'o')
+plt.vlines(x, 0, y)
+#二項分布→正規分布の近似（サイコロを100回振って2が出る確率）
+n = 100
+p = 1/6
+x = np.arange(n+1)
+y = stats.binom(n, p).pmf(x) #.binomで二項分布を行う(nが試行回数、pが確率)
+y2 = stats.norm(n*p, np.sqrt(n*p*(1-p))).pdf(x) #正規分布は連続型だからpdf(x)
+plt.plot(x, y2)
+plt.plot(x, y, 'o')
