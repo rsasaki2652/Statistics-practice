@@ -1,0 +1,42 @@
+#平均の標本分布(50個の標本を100回抽出)
+m = 100
+n = 50
+column = 'tip'
+sample_means = []
+for i in range(m):
+    sample_df = df.sample(n)
+    sample_mean = sample_df[column].mean()
+    sample_means.append(sample_mean)
+#標本平均
+np.mean(sample_means)
+#母平均
+df[column].mean()
+#標本の分散
+np.var(sample_means)
+#母分散
+np.var(df[column])/n
+
+#不偏分散
+stats.tvar(df['tip'])
+np.var(df['tip'], ddof=1) #母分散から不偏分散 ddofは自由度
+np.sqrt(stats.tvar(df['tip'])) #不偏分散から標準偏差
+np.std(df['tip'], ddof=1) #標準偏差から不偏分散で求めた標準偏差
+
+#不偏分散の不偏性を確認する(50個の標本を100回抽出)
+n = 50
+m = 100
+column = 'tip'
+sample_vars = []
+sample_tvars = []
+for i in range(m):
+    sample_df = df.sample(n)
+    sample_var = np.var(sample_df[column])
+    sample_vars.append(sample_var)
+    sample_tvar = stats.tvar(sample_df[column])
+    sample_tvars.append(sample_tvar)
+#標本の分散の平均
+np.mean(sample_vars)
+#母分散
+np.var(df[column])
+#標本の不偏分散の平均
+np.mean(sample_tvars)
