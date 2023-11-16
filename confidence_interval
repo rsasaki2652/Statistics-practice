@@ -1,0 +1,65 @@
+#比率の区間推定
+stats.binom.interval(0.95, 1000, 0.6)
+
+
+#データセットを母集団と見立てて比率の区間推定
+n = 50
+m = 100
+alpha = 0.95
+population_male_ratio = len(df[df['sex']=='Male']) / len(df)
+results = []
+for _ in range(m):
+    sample_df = df.sample(n)
+    male_ratio = len(sample_df[df['sex']=='Male']) / n
+    min_num, max_num = stats.binom.interval(alpha, n, male_ratio)
+    min_ratio = min_num / n
+    max_ratio = max_num / n
+    correct = min_ratio < population_male_ratio < max_ratio
+    results.append({'min': min_ratio, 'max': max_ratio, 'correct': correct})
+result_df = pd.DataFrame(results)
+result_df['correct'].value_counts()
+
+
+#データセットを母集団と見立てて平均の区間推定（正規分布）
+n = 50
+m = 100
+alpha = 0.95
+column = 'tip'
+population_tip_mean = np.mean(df[column])
+results = []
+for _ in range(m):
+    sample_df = df.sample(50)
+    sample_mean = np.mean(sample_df[column])
+    sample_tvar = stats.tvar(sample_df[column])
+    min_mean, max_mean = stats.norm.interval(0.95, sample_mean, np.sqrt(sample_tvar/n))
+    correct = min_mean < population_tip_mean < max_mean
+    results.append({'min': min_mean, 'max': max_mean, 'correct': correct})
+result_df = pd.DataFrame(results)
+result_df['correct'].value_counts()
+
+#t分布
+x = np.linspace(-3, 3, 100)
+z = stats.norm.pdf(x)
+for dof in range(1, 12, 5):
+    t = stats.t(dof).pdf(x)
+    plt.plot(x, t, label=f't dist(dof={dof})')
+plt.plot(x, z, label='std norm', linewidth=3)
+plt.legend()
+
+
+#データセットを母集団と見立てて平均の区間推定（正規分布 vs t分布）
+n = 50
+m = 100
+alpha = 0.95
+column = 'tip'
+population_tip_mean = np.mean(df[column])
+
+sample_df = df.sample(n)
+sample_mean = np.mean(sample_df[column])
+sample_var = stats.tvar(sample_df[column])
+min_val_norm, max_val_norm = stats.norm.interval(alpha=alpha, loc=sample_mean, scale=np.sqrt(sample_var/n))
+min_val_t, max_val_t = stats.t.interval(alpha=alpha, loc=sample_mean, scale=np.sqrt(sample_var/n), df=n-1)
+print(f'population_tip_mean: {population_tip_mean}')
+print(f'sample_mean: {sample_mean}')
+print(f'min_val_norm: {min_val_norm}, max_val_norm: {max_val_norm}')
+print(f'min_val_t: {min_val_t}, max_val_t: {max_val_t}')
