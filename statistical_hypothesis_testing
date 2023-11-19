@@ -1,0 +1,27 @@
+# 比率の差の検定(Z-test)
+from statsmodels.stats.proportion import proportions_ztest
+proportions_ztest([30, 33], [1000, 1000], alternative='smaller') #(検定統計量, p値)を返す
+
+#連関の検定
+obs = [[15, 5], [15, 65]]
+stats.chi2_contingency(obs, correction=False) #(カイ二乗値, p値, 自由度, 期待度数)を返す
+
+#Z検定とカイ二乗検定（自由度1）のp値の比較
+n = 50
+sample_df1 = df.sample(n)
+sample_df2 = df.sample(n)
+#Z検定
+count1 = len(sample_df1[sample_df1['time']=='Dinner'])
+count2 = len(sample_df2[sample_df2['time']=='Dinner'])
+proportions_ztest([count1, count2], [n, n], alternative='two-sided')
+#カイ二乗検定
+obs = [[count1, n-count1], [count2, n-count2]]
+stats.chi2_contingency(obs, correction=False)
+
+#平均値差の検定
+male_tip_rate = df[df['sex']=='Male']['tip_rate']
+female_tip_rate = df[df['sex']=='Female']['tip_rate']
+#スチューデントのt検定
+stats.ttest_ind(male_tip_rate, female_tip_rate, equal_var=True) #t値,p値を返す
+#ウェルチのt検定
+stats.ttest_ind(male_tip_rate, female_tip_rate, equal_var=False) #t値,p値を返す
